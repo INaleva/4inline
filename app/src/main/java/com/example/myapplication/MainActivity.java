@@ -56,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
              this is the top line special case.
              take the last column for example, it will start from 41.
              41 >> 41-7=34 >> 34 >> 34-7 = 27 >> 27-7 = 20 >> 20 >> 20-7 = 13 >> 13 >> 13-7 = 6 >> 6 >> 6-7(!!!) make it 6 (was placeholder)
+
+            0  1  2  3  4  5  6
+            7  8  9  10 11 12 13
+            14 15 16 17 18 19 20
+            21 22 23 24 25 26 27
+            28 29 30 31 32 33 34
+            35 36 37 38 39 40 41
              */
             if(placeHolder < 7)
             {
