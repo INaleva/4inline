@@ -30,49 +30,49 @@
             android:id="@+id/imageView7"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/white" />
 
         <ImageButton
             android:id="@+id/imageView14"
             android:layout_width="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/white" />
 
         <ImageButton
             android:id="@+id/imageView21"
             android:layout_width="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/white" />
 
         <ImageButton
             android:id="@+id/imageView28"
             android:layout_width="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/white" />
 
         <ImageButton
             android:id="@+id/imageView35"
             android:layout_width="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/white" />
 
