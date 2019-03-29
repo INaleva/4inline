@@ -242,7 +242,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void playerWon(String color) {
-        //Toast.makeText(this, "" + color + " player won!", Toast.LENGTH_SHORT).show();
         gameOver = true; //game is finished, no moves can be played
         final TextView topTextView = findViewById(R.id.topText);
         topTextView.setText(color + " player won!");
@@ -251,6 +250,14 @@ public class MainActivity extends AppCompatActivity {
         button.setVisibility(View.VISIBLE);
     }
 
+    private void playerTie() {
+        gameOver = true; //game is finished, no moves can be played
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText("TIE!");
+
+        final Button button = findViewById(R.id.button);
+        button.setVisibility(View.VISIBLE);
+    }
     private boolean lookRightStartingAt(int start) {
         String startColor = mBoard.get(start).color;
         if (startColor.equals("White")) //no need to check if its white
@@ -345,10 +352,12 @@ public class MainActivity extends AppCompatActivity {
 
     void updateBoard(boolean clear)
     {
+        boolean wipe = true; //for checking if the board is full
         if (clear) { //if clearing the whole board is needed
             for(ImageButtonClass button : mBoard) {
                 button.imageButton.setImageResource(R.drawable.white);
                 button.color = "White";
+                wipe = false;
             }
         }
         else //update each circle to its matching color
@@ -356,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if(button.color.matches("White"))
             {
+                wipe = false; //if we have at least one white circle : not a tie yet
                 button.imageButton.setImageResource(R.drawable.white);
             }
             if(button.color.matches("Red"))
@@ -367,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
                 button.imageButton.setImageResource(R.drawable.black);
             }
         }
+        if (wipe) playerTie(); //make a tie if the board is full
     }
 
     //play again after pressing the restart button
