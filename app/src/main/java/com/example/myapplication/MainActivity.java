@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     it will return 1. if the column was full, it will return 0, so we can give the player another try.
     */
     public void makeMove(View view) {
-        if (!isBusy) {
+        if (!isBusy && !gameOver) {
             String column = (String) view.getTag(); // from 0-6, according where the user clicks.
             int tagColumn = Integer.parseInt(column); //same as previous line, but int.
             Toast.makeText(this, "Column is " + column, Toast.LENGTH_SHORT).show();
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void playerWon(String color) {
         //Toast.makeText(this, "" + color + " player won!", Toast.LENGTH_SHORT).show();
-        //gameOver = true; //game is finished, no moves can be played
+        gameOver = true; //game is finished, no moves can be played
         final TextView topTextView = findViewById(R.id.topText);
         topTextView.setText(color + " player won!");
 
