@@ -3,7 +3,9 @@ package com.example.myapplication;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ImageButtonClass> mBoard;
     String currentPlayer = "Red";
     Boolean isBusy = false;
+    Boolean gameOver = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBoard = new ArrayList<>();
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText("Black turn");
 
         for(int i = 0;i <42;i++)
         {
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Column is filled to to top...  column #" + tagColumn, Toast.LENGTH_SHORT).show();
             }
 
-            //check for every row from below, at i*7 + tagColumn, if it Empty or not.
+            //check for every row from below, at i*7 + tagColumn, if its Empty or not.
             for (int i = 5; i >= 0; i--) {
                 placeHolder = i * 7 + tagColumn;
 
@@ -77,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-            updateBoard();
+            updateBoard(false);
         }
     }
 
@@ -113,11 +119,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     break;
                             }
-                            isBusy = false; //critical area release, so a new move can be made.
+                            checkBoardState(); //check if the board has 4 in a row
                         }
                     });
                 }
-            }, 300);
+            }, 40); //was 300
         }
 
         else
@@ -144,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }, 300);
+            }, 40); //was 300
 
             //now we will color it back to white.
             //recursivly call the same method but with the next row.
@@ -162,12 +168,171 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }, 600);
+            }, 80); //was 600
         }
     }
 
+    //this function will check every end of a turn if the board has 4 in a row
+    private void checkBoardState() {
+        Timer buttonTimer = new Timer();
+        buttonTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        //horizontal check loop:
+                        int row = 0;
+                        for (int i=0; i<=3; i++) //check each row for columns 0-3,1-4,2-5,3-6
+                        {
+                            if (lookRightStartingAt(i + (row*7)))
+                                playerWon(mBoard.get(i + (row*7)).color);
+                            if (i>=3 && row<5)
+                            {
+                                i=-1; //-1 because at the end of the loop i is incremented by 1 so we get 0 again
+                                row++;
+                            }
+                        }
+
+                        //vertical check loop:
+                        int column = 0;
+                        for (int i=0; i<=2; i++) //check each column for rows
+                        {
+                            if (lookDownStartingAt(i*7 + (column)))
+                                playerWon(mBoard.get(i*7 + (column)).color);
+                            if (i>=2 && column<6)
+                            {
+                                i=-1; //-1 because at the end of the loop i is incremented by 1 so we get 0 again
+                                column++;
+                            }
+                        }
+
+                        //diagonal check loop:
+                        row = 0;
+                        for (int i=0; i<=3; i++) //check each row for columns 0-3,1-4,2-5,3-6
+                        {
+                            if (lookDiagonallyRightStartingAt(i + (row*7)))
+                                playerWon(mBoard.get(i + (row*7)).color);
+                            if (i>=3 && row<2)
+                            {
+                                i=-1; //-1 because at the end of the loop i is incremented by 1 so we get 0 again
+                                row++;
+                            }
+                        }
+
+                        row = 0;
+                        for (int i=3; i<=6; i++) //check each row for columns 0-3,1-4,2-5,3-6
+                        {
+                            if (lookDiagonallyLeftStartingAt(i + (row*7)))
+                                playerWon(mBoard.get(i + (row*7)).color);
+                            if (i>=6 && row<2)
+                            {
+                                i=2; //2 because at the end of the loop i is incremented by 1 so we get 3 again
+                                row++;
+                            }
+                        }
+
+                        isBusy = false; //critical area release, so a new move can be made.
+                    }
+                });
+            }
+        }, 80); //was 300
+
+    }
+
+    private void playerWon(String color) {
+        //Toast.makeText(this, "" + color + " player won!", Toast.LENGTH_SHORT).show();
+        //gameOver = true; //game is finished, no moves can be played
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText(color + " player won!");
+
+        final Button button = findViewById(R.id.button);
+        button.setVisibility(View.VISIBLE);
+    }
+
+    private boolean lookRightStartingAt(int start) {
+        String startColor = mBoard.get(start).color;
+        if (startColor.equals("White")) //no need to check if its white
+        {
+            return false;
+        }
+        else //check if we have four same color circles to the right
+        {
+            if (startColor.equals(mBoard.get(start+1).color) &&
+               startColor.equals(mBoard.get(start+2).color) &&
+               startColor.equals(mBoard.get(start+3).color)) {
+                for (int i=0;i<=3;i++)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
+                return true;
+            }
+                  else
+                  return false;
+        }
+    }
+
+    private boolean lookDownStartingAt(int start) {
+        String startColor = mBoard.get(start).color;
+        if (startColor.equals("White")) //doesn't need to check if its white
+        {
+            return false;
+        }
+        else //check if we have four same color circles downside
+        {
+            if (startColor.equals(mBoard.get(start+7).color) &&
+                    startColor.equals(mBoard.get(start+14).color) &&
+                    startColor.equals(mBoard.get(start+21).color)){
+                for (int i=0;i<=3*7;i+=7)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
+                return true;
+            }
+            else
+                return false;
+        }
+    }
+
+    private boolean lookDiagonallyRightStartingAt(int start) {
+        String startColor = mBoard.get(start).color;
+        if (startColor.equals("White")) //doesn't need to check if its white
+        {
+            return false;
+        }
+        else //check if we have four same color circles diagonally
+        {
+            if (startColor.equals(mBoard.get(start+8).color) &&
+                    startColor.equals(mBoard.get(start+16).color) &&
+                    startColor.equals(mBoard.get(start+24).color)){
+                for (int i=0;i<=3*8;i+=8)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
+                return true;
+            }
+            else
+                return false;
+        }
+    }
+
+    private boolean lookDiagonallyLeftStartingAt(int start) {
+        String startColor = mBoard.get(start).color;
+        if (startColor.equals("White")) //doesn't need to check if its white
+        {
+            return false;
+        }
+        else //check if we have four same color circles diagonally
+        {
+            if (startColor.equals(mBoard.get(start+6).color) &&
+                    startColor.equals(mBoard.get(start+12).color) &&
+                    startColor.equals(mBoard.get(start+18).color)){
+                for (int i=0;i<=3*6;i+=6)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
+                return true;
+            }
+            else
+                return false;
+        }
+    }
     private void changeTurn() {
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText(currentPlayer + " turn");
         if (currentPlayer.matches("Black"))
         {
             currentPlayer = "Red";
@@ -178,8 +343,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void updateBoard()
+    void updateBoard(boolean clear)
     {
+        if (clear) { //if clearing the whole board is needed
+            for(ImageButtonClass button : mBoard) {
+                button.imageButton.setImageResource(R.drawable.white);
+                button.color = "White";
+            }
+        }
+        else //update each circle to its matching color
         for(ImageButtonClass button : mBoard)
         {
             if(button.color.matches("White"))
@@ -195,6 +367,13 @@ public class MainActivity extends AppCompatActivity {
                 button.imageButton.setImageResource(R.drawable.black);
             }
         }
+    }
 
+    //play again after pressing the restart button
+    public void onPlayAgain(View view) {
+        gameOver = false; //critical area release, so new moves can be made
+        view.setVisibility(View.INVISIBLE); //make restart button invisible
+        changeTurn();
+        updateBoard(true); //empty the board
     }
 }
