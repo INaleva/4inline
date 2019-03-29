@@ -3,7 +3,9 @@ package com.example.myapplication;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ImageButtonClass> mBoard;
     String currentPlayer = "Red";
     Boolean isBusy = false;
+    Boolean gameOver = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBoard = new ArrayList<>();
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText("Black turn");
 
         for(int i = 0;i <42;i++)
         {
@@ -236,8 +242,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void playerWon(String color) {
-        updateBoard(true);
-        Toast.makeText(this, "" + color + " player won!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "" + color + " player won!", Toast.LENGTH_SHORT).show();
+        //gameOver = true; //game is finished, no moves can be played
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText(color + " player won!");
+
+        final Button button = findViewById(R.id.button);
+        button.setVisibility(View.VISIBLE);
     }
 
     private boolean lookRightStartingAt(int start) {
@@ -250,8 +261,11 @@ public class MainActivity extends AppCompatActivity {
         {
             if (startColor.equals(mBoard.get(start+1).color) &&
                startColor.equals(mBoard.get(start+2).color) &&
-               startColor.equals(mBoard.get(start+3).color))
-                  return true;
+               startColor.equals(mBoard.get(start+3).color)) {
+                for (int i=0;i<=3;i++)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
+                return true;
+            }
                   else
                   return false;
         }
@@ -267,8 +281,11 @@ public class MainActivity extends AppCompatActivity {
         {
             if (startColor.equals(mBoard.get(start+7).color) &&
                     startColor.equals(mBoard.get(start+14).color) &&
-                    startColor.equals(mBoard.get(start+21).color))
+                    startColor.equals(mBoard.get(start+21).color)){
+                for (int i=0;i<=3*7;i+=7)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
                 return true;
+            }
             else
                 return false;
         }
@@ -284,8 +301,11 @@ public class MainActivity extends AppCompatActivity {
         {
             if (startColor.equals(mBoard.get(start+8).color) &&
                     startColor.equals(mBoard.get(start+16).color) &&
-                    startColor.equals(mBoard.get(start+24).color))
+                    startColor.equals(mBoard.get(start+24).color)){
+                for (int i=0;i<=3*8;i+=8)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
                 return true;
+            }
             else
                 return false;
         }
@@ -301,13 +321,18 @@ public class MainActivity extends AppCompatActivity {
         {
             if (startColor.equals(mBoard.get(start+6).color) &&
                     startColor.equals(mBoard.get(start+12).color) &&
-                    startColor.equals(mBoard.get(start+18).color))
+                    startColor.equals(mBoard.get(start+18).color)){
+                for (int i=0;i<=3*6;i+=6)
+                    mBoard.get(start+i).imageButton.setImageResource(R.drawable.green);
                 return true;
+            }
             else
                 return false;
         }
     }
     private void changeTurn() {
+        final TextView topTextView = findViewById(R.id.topText);
+        topTextView.setText(currentPlayer + " turn");
         if (currentPlayer.matches("Black"))
         {
             currentPlayer = "Red";
@@ -342,6 +367,13 @@ public class MainActivity extends AppCompatActivity {
                 button.imageButton.setImageResource(R.drawable.black);
             }
         }
+    }
 
+    //play again after pressing the restart button
+    public void onPlayAgain(View view) {
+        gameOver = false; //critical area release, so new moves can be made
+        view.setVisibility(View.INVISIBLE); //make restart button invisible
+        changeTurn();
+        updateBoard(true); //empty the board
     }
 }

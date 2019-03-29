@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="topTextView">Text</string>
+    <string name="play_again">PLAY AGAIN</string>
 </resources>
